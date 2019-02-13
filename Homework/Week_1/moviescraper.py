@@ -70,10 +70,7 @@ def extract_movies(dom):
             
             # clear the movie list again for the new movie
             movie = []
-            
-            # restart time
-            start_time = time.time()
-            
+
     return [all_movies]
 
 
