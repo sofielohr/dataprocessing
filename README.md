@@ -4,4 +4,4 @@ By Sofie Löhr - University of Amsterdam
 
 
 Link to my site:
-http(s)://sofielohr.github.io/dataprocessing
+https://sofielohr.github.io/dataprocessing/
