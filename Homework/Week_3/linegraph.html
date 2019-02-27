@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linegraph</title>
+</head>
+<body>
+<h1>Percentage of sunshine per day 2018</h1>
+<p>A line graph of the amount of sunshine as a percentage of the maximum amount of sunshine per day in 2018. The data is from the <a href="http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi">KNMI</a> (variable SP), year 2018, station 290: Twenthe. </p>
+<p align="right" valign="top">
+    Name: Sofie Lohr<br/>
+    Student number: 11038926
+</p>
+
+<canvas id="line-graph" width="1200" height="800" style="position:absolute; left: 50px; top: 150px;"></canvas>
+<script>
+
+// Get data
+var fileName = "data.json";
+var txtFile = new XMLHttpRequest();
+
+txtFile.onreadystatechange = function() {
+    if (txtFile.readyState === 4 && txtFile.status == 200) {
+        var data = JSON.parse(txtFile.responseText);
+        
+        // Set x en y as list and calculate length (is same for x and y)
+        var x = [];
+        var y = [];
+
+        data.forEach(function(element){
+            x.push(element.Date);
+            y.push(element.SP);
+        })
+        
+        var Len = x.length;
+
+        // Declare graph variables (pixels)
+        var GRAPH_TOP = 25;
+        var GRAPH_BOTTOM = 650;
+        var GRAPH_LEFT = 50;
+        var GRAPH_RIGHT = 1175;
+
+        // Calculate domain
+        var min_max_y = [];
+        var min_max_x = [0,366];
+        min_max_y.push(Math.min.apply(null, y));
+        min_max_y.push(Math.max.apply(null, y));
+
+        // createTransform function for x and y
+        functionX = createTransform(min_max_x, [GRAPH_LEFT, GRAPH_RIGHT]);
+        functionY = createTransform(min_max_y, [GRAPH_BOTTOM, GRAPH_TOP]);
+
+        // Graph
+        var cx = document.querySelector("canvas").getContext("2d");
+        
+        // Move from point to point
+        cx.beginPath();
+        cx.strokeStyle = "blue";
+        cx.moveTo(GRAPH_LEFT, GRAPH_BOTTOM);
+        for(var i = 0; i < Len; i++){
+            cx.lineTo(functionX(i),functionY(y[i]));
+        }
+        cx.stroke();
+
+
+        // Draw axis
+        cx.beginPath();
+        cx.moveTo( GRAPH_LEFT, GRAPH_BOTTOM );
+        cx.lineTo( GRAPH_RIGHT, GRAPH_BOTTOM );
+        cx.moveTo(GRAPH_LEFT,GRAPH_BOTTOM);
+        cx.lineTo( GRAPH_LEFT, GRAPH_TOP );
+        cx.stroke();
+
+        // Axis values & names
+        cx.font = "16px Times New Roman";
+
+        // X-axis values: months and lines
+        var axis_months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        for (h = 0; h < 13; h++){
+            cx.fillText(axis_months[h], (GRAPH_LEFT + 5 + (h-1)*93.75), GRAPH_BOTTOM+13);
+            cx.fillText("|", (GRAPH_LEFT + h*93.75)-2,GRAPH_BOTTOM+11);
+        }
+
+        // Y-axis: values
+        for (k = 0; k < 101; k += 20){
+            cx.fillText(k, 22, (GRAPH_BOTTOM - k*6.25));
+            cx.fillText("-", 45, (GRAPH_BOTTOM - k*6.25) + 3);
+        }    
+
+        // X-axis: name
+        cx.font = "bold 18px Times New Roman";
+        cx.fillText("Month", 600, 685);
+
+
+        // Y-axis: name
+        cx.rotate(-Math.PI/2);
+        cx.fillText("Percentage of sunshine", -400, 18);
+
+        // Title
+        cx.rotate(+Math.PI/2);
+        cx.font = "bold 20px Times New Roman";
+        cx.fillText("Pertentage of sunshine a day in 2018", 500, 20);
+        
+    }
+}
+txtFile.open("GET", fileName);
+txtFile.send();
+
+
+function createTransform(domain, range){
+	// domain is a two-element array of the data bounds [domain_min, domain_max]
+	// range is a two-element array of the screen bounds [range_min, range_max]
+	// this gives you two equations to solve:
+	// range_min = alpha * domain_min + beta
+	// range_max = alpha * domain_max + beta
+ 		// a solution would be:
+
+    var domain_min = domain[0]
+    var domain_max = domain[1]
+    var range_min = range[0]
+    var range_max = range[1]
+
+    // formulas to calculate the alpha and the beta
+    var alpha = (range_max - range_min) / (domain_max - domain_min)
+    var beta = range_max - alpha * domain_max
+
+    // returns the function for the linear transformation (y= a * x + b)
+    return function(x){
+        return alpha * x + beta;
+    }
+}
+
+</script>
+</body>
+</html>

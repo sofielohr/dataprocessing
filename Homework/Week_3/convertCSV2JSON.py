@@ -23,12 +23,15 @@ def processing(file):
 	file = file.drop(0, axis=0)
 
 	# change column names
-	file = file.rename(columns={'# STN':'STN', 'YYYYMMDD':'Date'})
+	file = file.rename(columns={'# STN':'STN', 'YYYYMMDD':'Date', '   SP':'SP'})
 
-	# convert Date to real date object
-	file.loc[:, 'Date'] = pd.to_datetime(file.loc[:, 'Date'], format='%Y-%m-%d')
-	print(file)
-	
+	i = 1;
+	# convert Date to date time
+	for elementen in file.loc[:, 'Date']:
+		date_time = pd.to_datetime(elementen, format='%Y%m%d')
+		file.loc[i, 'Date'] = date_time
+		i += 1
+
 	# Delete STN, not necessary
 	file = file.drop('STN', axis=1)
 
