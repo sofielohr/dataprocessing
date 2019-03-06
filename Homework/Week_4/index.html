@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <script type="text/javascript" src="d3/d3.js"></script>
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+    This dataset figures reprensenting various renewable and waste energy supply statistics while showcasing the renewable energy market’s products as well as figures for those products in terms of electricity output (GWh, heat output(TJ), domestic supply and stock changes.
+  	<script type="text/javascript">
+  		d3.select("head").append("title").text("Barchart");
+  		d3.select("body").append("title").text("Barchart of data");
+  		d3.select("body").append("p").text("Name: Sofie Lohr, student number: 11038926, LATE SUBMISSION");
+      d3.select("body").append("header").text("LATE SUBMISSION");
+      d3.select("body").append("p").text("This is a barchart of Renewable and Waste Energy Supply (KTOE)");
+
+      // height and width
+      var padding = [20,20,20,20]; // Top Right Bottom Left
+      var w = 660 ;
+      var h = 560 ;
+      // create the y values and bar padding
+      var barPadding = 2;
+        
+      // data
+  		d3.json("data.json").then(function(data){
+        
+        var y = data.Value;
+
+        // create svg element
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", w)                    
+                    .attr("height", h)
+
+        // Scale
+        var xScale = d3.scaleBand()
+                       .rangeRound([20, w]).padding(0.1)
+                       .domain(data.map(function(d) {return d.LOCATION; }));
+        var yScale = d3.scaleLinear()
+                       .rangeRound([ h - 20 , 0 ])
+                       .domain([0,  d3.max(data, function(d) { return d.Value; })]);
+          
+        // Axis
+        var xAxis = d3.axisBottom(xScale).ticks(function(d){return d.LOCATION;})
+        var yAxis = d3.axisLeft(yScale)
+                      .ticks(8);
+
+        svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(" + 0 + "," + (h - 20) + ")")
+              .call(xAxis)
+              .append("text")
+
+        svg.append("g")
+              .attr("class", "y axis")
+              .attr("transform", "rotate(-90)")
+              .attr("transform", "translate(" + 35 + "," + 0 + ")")
+              .call(yAxis)
+              .append("text")
+              .attr("y", 8 )
+              .attr("dy", ".71em")
+              .style("text-anchor", "end")
+              .text("KTOE")
+
+        // create the bars for the barchart
+        var bars = svg.selectAll("rect")
+                      .data(data)
+    	                .enter()
+    	                .append("rect")
+                        .attr("x", function(d) { return xScale(d.LOCATION); })
+                        .attr("y", function(d) { return yScale(d.Value); })
+                        .attr("width", xScale.bandwidth())
+                        .attr("height", function(d) { return h - 20 - yScale(d.Value); })
+                        .attr("fill", "teal");
+
+  		  });
+
+    </script>
+  </body>
+</html>
