@@ -69,14 +69,13 @@
     }
     </style>
   </head>
-  <body>
-    <h1>Top 20 countries with the highest energy consumption</h1>
-     
+  <body>     
   	<script type="text/javascript">
   		d3.select("head").append("title").text("Barchart");
   		d3.select("body").append("title").text("Barchart of Energy Consumption");
-      d3.select("body").append("p").text("This dataset figure reprensents the amount of energy consumption by country (top 20) in kilo tonne of oil equivalent (Ktoe). This energy unit is defined as the amount of energy released by burning one tonne of crude oil. Data from OECD") 
-      d3.select("body").append("p").style("font-size", "11px").text("Name: Sofie Lohr (11038926). Late submission (Wildcart)") 
+      d3.select("body").append("h1").text("Top 20 countries with the highest energy consumption");
+      d3.select("body").append("p").text("This dataset figure reprensents the amount of energy consumption by country (top 20) in kilo tonne of oil equivalent (Ktoe). This energy unit is defined as the amount of energy released by burning one tonne of crude oil. Data from OECD");
+      d3.select("body").append("p").style("font-size", "11px").text("Name: Sofie Lohr (11038926). Late submission (Wildcart)");
       // height and width
       var w = 800 ;
       var h = 600 ;
@@ -97,7 +96,7 @@
         var svg = d3.select("body")
                     .append("svg")
                     .attr("width", w)                    
-                    .attr("height", h)
+                    .attr("height", h);
 
         svg.call(tip);
 
@@ -110,32 +109,32 @@
                        .domain([0,  d3.max(data, function(d) { return d.Value; })]);
           
         // Axis
-        var xAxis = d3.axisBottom(xScale).ticks(function(d){return d.LOCATION;})
+        var xAxis = d3.axisBottom(xScale).ticks(function(d){return d.LOCATION;});
         var yAxis = d3.axisLeft(yScale)
                       .ticks(6)
-                      .tickFormat(d3.format(".0f"))
+                      .tickFormat(d3.format(".0f"));
 
         // create the axis and axis labels
         svg.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(" + 0 + "," + (h - 40) + ")")
-              .call(xAxis)
+              .call(xAxis);
         svg.append("text")
               .attr("transform", "translate(" + ((w + 60)/2) + "," + (h - 20) + ")")
               .style("text-anchor", "start")
               .style("alignment-baseline", "hanging")
-              .text("Country")
+              .text("Country");
 
         svg.append("g")
               .attr("class", "axis")
               .attr("transform", "translate(" + 65 + "," + 0 + ")")
-              .call(yAxis)
+              .call(yAxis);
         svg.append("text")
               .attr("transform", "rotate(-90)")
               .attr("x", - (h / 2))
               .attr("y", 15)
               .attr("text-anchor", "middle")
-              .text("Energy consumption (Ktoe)")
+              .text("Energy consumption (Ktoe)");
 
         // create the bars for the barchart
         var bars = svg.selectAll("bar")
@@ -148,7 +147,7 @@
                         .attr("width", xScale.bandwidth())
                         .attr("height", function(d) { return h - 40 - yScale(d.Value); })
                         .on('mouseover', tip.show)
-                        .on('mouseout', tip.hide)
+                        .on('mouseout', tip.hide);
 
   		  });
 
