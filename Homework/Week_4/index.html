@@ -3,76 +3,152 @@
   <head>
   	<meta charset="utf-8">
     <script type="text/javascript" src="d3/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <style type="text/css">
+    
+    .info text {
+      fill: black;
+      font-size: 20px;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        fill: black;
+        font-family: sans-serif;
+        font-size: 11px;
+    }
+    .axis--x text {
+      font-size: 9px;
+    }
+
+    .axis--x path{
+      display: none;
+    }
+
+    .bar {
+      fill: teal;
+    }
+    .bar hover {
+      fill: red;
+    }
+
+    /* basis from Justin Palmer's Block 646476579 ← 3885304, nov 15, 2018 */
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
     </style>
   </head>
   <body>
-    This dataset figures reprensenting various renewable and waste energy supply statistics while showcasing the renewable energy market’s products as well as figures for those products in terms of electricity output (GWh, heat output(TJ), domestic supply and stock changes.
+    <h1>Top 20 countries with the highest energy consumption</h1>
+     
   	<script type="text/javascript">
   		d3.select("head").append("title").text("Barchart");
-  		d3.select("body").append("title").text("Barchart of data");
-  		d3.select("body").append("p").text("Name: Sofie Lohr, student number: 11038926, LATE SUBMISSION");
-      d3.select("body").append("header").text("LATE SUBMISSION");
-      d3.select("body").append("p").text("This is a barchart of Renewable and Waste Energy Supply (KTOE)");
-
+  		d3.select("body").append("title").text("Barchart of Energy Consumption");
+      d3.select("body").append("p").text("This dataset figure reprensents the amount of energy consumption by country (top 20) in kilo tonne of oil equivalent (Ktoe). This energy unit is defined as the amount of energy released by burning one tonne of crude oil. Data from OECD") 
+      d3.select("body").append("p").style("font-size", "11px").text("Name: Sofie Lohr (11038926). Late submission (Wildcart)") 
       // height and width
-      var padding = [20,20,20,20]; // Top Right Bottom Left
-      var w = 660 ;
-      var h = 560 ;
+      var w = 800 ;
+      var h = 600 ;
       // create the y values and bar padding
       var barPadding = 2;
-        
+     
       // data
   		d3.json("data.json").then(function(data){
         
+        // create variables
         var y = data.Value;
-
+        var tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) { return "<strong>Country:</strong> <span style='color:darkcyan'>" + d.LOCATION + "</span><br/><strong>Ktoe:</strong> <span style='color:darkcyan'>" + d.Value + "</span>"; });
+        
         // create svg element
         var svg = d3.select("body")
                     .append("svg")
                     .attr("width", w)                    
                     .attr("height", h)
 
+        svg.call(tip);
+
         // Scale
         var xScale = d3.scaleBand()
-                       .rangeRound([20, w]).padding(0.1)
+                       .rangeRound([60, w]).padding(0.1)
                        .domain(data.map(function(d) {return d.LOCATION; }));
         var yScale = d3.scaleLinear()
-                       .rangeRound([ h - 20 , 0 ])
+                       .rangeRound([ h - 40 , 0 ])
                        .domain([0,  d3.max(data, function(d) { return d.Value; })]);
           
         // Axis
         var xAxis = d3.axisBottom(xScale).ticks(function(d){return d.LOCATION;})
         var yAxis = d3.axisLeft(yScale)
-                      .ticks(8);
+                      .ticks(6)
+                      .tickFormat(d3.format(".0f"))
 
+        // create the axis and axis labels
         svg.append("g")
-              .attr("class", "x axis")
-              .attr("transform", "translate(" + 0 + "," + (h - 20) + ")")
+              .attr("class", "axis axis--x")
+              .attr("transform", "translate(" + 0 + "," + (h - 40) + ")")
               .call(xAxis)
-              .append("text")
+        svg.append("text")
+              .attr("transform", "translate(" + ((w + 60)/2) + "," + (h - 20) + ")")
+              .style("text-anchor", "start")
+              .style("alignment-baseline", "hanging")
+              .text("Country")
 
         svg.append("g")
-              .attr("class", "y axis")
-              .attr("transform", "rotate(-90)")
-              .attr("transform", "translate(" + 35 + "," + 0 + ")")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + 65 + "," + 0 + ")")
               .call(yAxis)
-              .append("text")
-              .attr("y", 8 )
-              .attr("dy", ".71em")
-              .style("text-anchor", "end")
-              .text("KTOE")
+        svg.append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("x", - (h / 2))
+              .attr("y", 15)
+              .attr("text-anchor", "middle")
+              .text("Energy consumption (Ktoe)")
 
         // create the bars for the barchart
-        var bars = svg.selectAll("rect")
+        var bars = svg.selectAll("bar")
                       .data(data)
     	                .enter()
     	                .append("rect")
+                        .attr("class", "bar")
                         .attr("x", function(d) { return xScale(d.LOCATION); })
                         .attr("y", function(d) { return yScale(d.Value); })
                         .attr("width", xScale.bandwidth())
-                        .attr("height", function(d) { return h - 20 - yScale(d.Value); })
-                        .attr("fill", "teal");
+                        .attr("height", function(d) { return h - 40 - yScale(d.Value); })
+                        .on('mouseover', tip.show)
+                        .on('mouseout', tip.hide)
 
   		  });
 

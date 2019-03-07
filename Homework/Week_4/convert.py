@@ -19,7 +19,7 @@ MEASURE = "KTOE"
 def processing(file):
 	"""
 	Function cleaning and processing file	
-	Keep for every country the MEASURE value in the YEAR, both specified in the global constant
+	Keep for every country the MEASURE value in the YEAR, both specified in the global constant, only top 20 countries
 	Delete the missing values
 	Delete OECD Total; gives a distored image of the values since OECD is the sum of all the other countries values
 	"""
@@ -40,7 +40,8 @@ def processing(file):
 	# Sort values
 	file = file.sort_values(by='Value', ascending=False)
 
-	print(file)
+	# Save top 20 countries
+	file = file.head(20)
 	
 	return(file)
 
