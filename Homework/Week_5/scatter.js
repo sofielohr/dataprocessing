@@ -12,43 +12,42 @@ Promise.all(requests).then(function(response) {
     throw(e);
 });
 
-
+// initialize clean data
+let clean_data = {
+	"2012": [],
+	"2013": [],
+	"2014": [],
+	"2015": [],
+	"2016": [],
+	"2017": [],
+	"2018": [] 
+}
 
 function plotFun(input) {
-
 	// process data
+	
+	// iterate over countries
 	Object.values(input[0]).forEach(function(d){
+		// iterate over years
 		d.forEach(function(e) {
-			delete e.Transaction
-			delete e.Measure
-			e.GDP = e.Datapoint
-			delete e.Datapoint
-			e.Year = Number(e.Year)
-
-			Object.values(input[1]).forEach(function(a) {
-				a.forEach(function(b) {
-					if (e.Country === b.Country) {
-						if (Number(b.Time) === e.Year){
-							e.PPP = b.Datapoint
-						}
-					}
-				})
-			})
-
-			Object.values(input[2]).forEach(function(a) {
-				a.forEach(function(b) {
-					if (e.Country === b.Country) {
-						if (e.Year === Number(b.Time)){
-							e.tourists = b.Datapoint
-						}
-					}
-				})
-			})
+			// make object for country
+			var land = {}
+			land.country = e.Country
+			land.GDP = e.Datapoint
+			
+			// add object for country to the right year
+			clean_data[e.Year].push(land)
 		})
 	})
+	
+	// process ppp and tourists datasets and add to clean_data
+	valuesFun(input[1], "PPP")
+	valuesFun(input[2], "tourists")
+	var i = 0
 
-	console.log(input[0])
-	var data = input[0]
+	// delete values with not every variable 
+	// iterate over years
+
 	// width & height
 	var w = 600
 	var h = 600
@@ -58,20 +57,48 @@ function plotFun(input) {
 				.attr("width", w)
 				.attr("height", h);
 
+	// scales
+	var padding = 40
+	var xScale = d3.scaleLinear()
+					.domain([0, d3.max(clean_data["2012"], function(d) {return d.PPP; })])
+					.rangeRound([padding, w - padding*2])
+    var yScale = d3.scaleLinear()
+					.domain([d3.min(clean_data["2012"], function(d){ return d.GDP; }),  d3.max(clean_data["2012"], function(d) { return d.GDP; })])
+					.rangeRound([h - padding*2, padding])
+	// var rScale 
+	
 	svg.selectAll("circle")
-		.data(input[0])
+		.data(clean_data["2012"])
 		.enter()
 		.append("circle")
 		.attr("cx", function(d){
-			data.forEach(function(e){
-				console.log(e)
-				return e.PPP;
-			})
+			return xScale(d.PPP);
 		})
 		.attr("cy", function(d){
-			return d.GDP;
+			return yScale(d.GDP);			
 		})
 		.attr("r", 5)
 
-
 }
+
+function valuesFun(i, name) {
+	// INPUT DATA: iterate over countries
+	Object.values(i).forEach(function(d){
+		// INPUT DATA: iterate over years in input data
+		d.forEach(function(e) {
+			
+			// CLEAN DATA: if year in cleandata -> select the right year & country
+			if ( typeof(clean_data[e.Time]) !== "undefined") {
+				clean_data[e.Time].forEach(function(f){
+					if (f.country === e.Country) {
+						// add the datapoint to clean_data variable
+						f[name] = e.Datapoint
+					}
+				})
+			}
+		})
+	})
+}
+
+
+
