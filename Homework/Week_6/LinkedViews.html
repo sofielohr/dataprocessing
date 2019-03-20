@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!-- Sofie Lohr, 11038926 -->
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>Footprint</title>
+
+    <!-- Import D3 V5 -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+      d3v5 = d3;
+      window.d3 = null;
+    </script>
+
+    <!-- Import D3 V3 and TopoJSON -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="datamaps.world.min.js"></script>
+    <script>
+
+      d3v3 = d3;
+      window.d3 = null;
+    </script>
+    
+    <!-- REST OF IMPORTS HERE -->
+    <link rel="stylesheet" type"text/css" href="LinkedViews.css">
+    <script src="LinkedViews.js"></script>
+
+
+  </head>
+
+  <body>
+  	<h1>Ecological Footprint around the world</h1>
+  	<p>The world map represents the intensity (in global hectares) of the ecological footprint from consumption for each country where darker means higher intensity. The pie chart represents the distribution from the Ecological footprint of consumption (for Armenia) between crop land, grazing land, forest land, fishing grounds, built up land and carbon. Data from <a href="https://www.kaggle.com/footprintnetwork/national-footprint-accounts-2018">Kaggle</a>. </p>
+  	<p style="font-size: 11px" >Name: Sofie Löhr (11038926)</p>
+    <div id="container_map"></div>
+    <div id="chart"></div>
+  </body>
+</html>
