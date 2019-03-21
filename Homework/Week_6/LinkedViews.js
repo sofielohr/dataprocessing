@@ -5,8 +5,9 @@ var requests = [d3v5.json("data.json")];
 
 Promise.all(requests).then(function(response) {
 	var map = process(response);
-	var piedata = map.AFG.pie;
+	console.log(map)
 	worldmap(map);
+	var piedata = map.ARM.pie;
 	piechart(piedata);
 });
 
@@ -47,23 +48,47 @@ function process(input) {
 			map[d.CountryCode] = country_variables
 		}
 	})
-
 	return map;
-
 }
 
 function worldmap(input){
 
 	var datamap = new Datamap({
 		element: document.getElementById("container_map"),
+
+		geographyConfig: {
+			// pop up settings
+	        popupTemplate: function(geography, data) {
+	        	var EF = Math.round(data.EFConsPerCap * 100) / 100;
+	        	return['<div class = "hoverinfo"><strong>'+
+	            		geography.properties.name + 
+	            		'<br/>EF: ' + EF +
+	            		'</strong></div>'];},
+
+	        // set highlight properties (upon mouseover)
+	        highlightOnHover: true,
+	        popupOnHover: true,
+	        highlightFillColor: "#b5ccca",
+	        highlightBorderColor: "#b5ccca"
+	    },
+		
 		data: input,
+
 		fills: {
 			"low": "#6EF172",
 			"medium": "#59C15C",
 			"high": "#448E46",
 			"super high": "#2E5A2F",
 			defaultFill: "#E0EBE0"
-		}
+		},
+
+		// done: function(map) { 
+		// 	var code = "ARM"
+
+		// 	div.selectAll(".datamaps-subunit").on("click", function(geography){
+		// 		code = geography.id;
+		// 	})
+		// }
 	});
 }
 
@@ -75,7 +100,7 @@ function piechart(input){
 
 	// set legend dimensions
 	var legendRectSize = 25
-	var legendSpacing = 6
+	var legendSpacing = 3
 
 	// define color scale
 	var color = d3v5.scaleOrdinal(d3v5.schemePastel1)
@@ -85,7 +110,7 @@ function piechart(input){
 			.attr("width", w)
 			.attr("height", h)
 		.append("g")
-			.attr("transform", "translate(" + 100 + "," + 200 + ")")
+			.attr("transform", "translate(" + 200 + "," + 200 + ")")
 
 	var arc = d3v5.arc()
 		.innerRadius(0)
@@ -102,6 +127,13 @@ function piechart(input){
 		.attr('d', arc)
 		.attr('fill', function(d){ return color(d.data.value); })
 
+	// tooltip
+	var tooltip = d3v5.select("#chart")
+		.append("div")
+			.attr("class", "tooltip")
+	
+	tooltip.append("d")
+
 	
 	// legend
 	var legend = svg.selectAll(".legend")
@@ -110,153 +142,27 @@ function piechart(input){
 		.append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d,i){
-			var height = legendRectSize +legendSpacing
-			var offset = 100 * color.domain().length / 2
+			var height = legendRectSize + legendSpacing
+			var offset = height * color.domain().length / 2
 			var horz = 5 * legendRectSize
-			var vert = i * h - offset
-			return "translate(" + horz + "," + vert + ")";
+			var vert = i * height - offset
+			return "translate(" + horz + "," + (vert - 16) + ")";
 		})
 
 	legend.append("rect")
 		.attr("width", legendRectSize)
 		.attr("height", legendRectSize)
+		.style("fill", color)
 		.style("stroke", color)
-		.append("text")
-		.attr("x", legendRectSize + legendSpacing)
+	
+	legend.append("text")
+		.data(input)
+		.attr("x", legendRectSize + 2 * legendSpacing)
 		.attr("y", legendRectSize - legendSpacing)
-		.text(function(d){ return d; })
+		.text(function(d){ return d.label; })
 }
 
-// function worldmap(input) {
-	// process data
-	
-// 	// iterate over countries
-// 	Object.values(input[0]).forEach(function(d){
-// 		// iterate over years
-// 		d.forEach(function(e) {
-// 			// make object for country
-// 			var land = {};
-// 			land.country = e.Country;
-// 			land.GDP = e.Datapoint;
-			
-// 			// add object for country to the right year
-// 			clean_data[e.Year].push(land);
-// 		});
-// 	});
 
-// 	// process ppp and tourists datasets and add to clean_data
-// 	valuesFun(input[1], "PPP");
-// 	valuesFun(input[2], "tourists");
+function update(input){
 
-// 	delCountries([clean_data["2012"]])
-
-// 	// width & height
-// 	var w = 800;
-// 	var h = 600;
-
-// 	var svg = d3.select("body")
-// 				.append("svg")
-// 				.attr("width", w)
-// 				.attr("height", h);
-// 	var tip = d3.tip()
-//                     .attr('class', 'd3-tip')
-//                     .offset([-10, 0])
-//                     .html(function(d) { return "<strong>Country:</strong> <span style='color:darkcyan'>" + d.country + "</span><br/><strong>GDP:</strong> <span style='color:darkcyan'>" + d.GDP + "</span></span><br/><strong>PPP:</strong> <span style='color:darkcyan'>" + d.PPP + "</span>"; });
-
-// 	// scales and axis
-// 	var padding = 40;
-// 	var xScale = d3.scaleLinear()
-// 					.domain([0, d3.max(clean_data["2012"], function(d) {return d.PPP; })])
-// 					.rangeRound([padding*1.5, w - padding]);
-//     var yScale = d3.scaleLinear()
-// 					.domain([d3.min(clean_data["2012"], function(d){ return d.GDP; }),  d3.max(clean_data["2012"], function(d) { return d.GDP; })])
-// 					.rangeRound([h - padding, padding]);
-// 	var colorScale = d3.scaleSequential(d3.interpolateCool)
-// 					.domain([0, d3.max(clean_data["2012"], function(d){ return d.tourists; })]);
-
-// 	var xAxis = d3.axisBottom(xScale)
-// 					.ticks(8);
-// 	var yAxis = d3.axisLeft(yScale)
-// 					.ticks(8)
-// 					.tickFormat(d3.format(".0s"));
-// 	var colorLegend = d3.legendColor(colorScale);
-
-// 	svg.call(tip);
-	
-// 	// create axis and labels
-// 	svg.append("g")
-// 		.attr("class", "axis")
-// 		.attr("transform", "translate(" + 0 + "," + (h - padding) + ")")
-// 		.call(xAxis);
-//     svg.append("text")
-// 		.attr("transform", "translate(" + w/2 + "," + (h - padding/2) + ")")
-// 		.style("text-anchor", "start")
-// 		.style("alignment-baseline", "hanging")
-// 		.text("PPP");
-
-// 	svg.append("g")
-// 		.attr("class", "axis")
-// 		.attr("transform", "translate(" + padding*1.5 + "," + 0 + ")")
-// 		.call(yAxis);
-// 	svg.append("text")
-// 		.attr("transform", "rotate(-90)")
-// 		.attr("x", - (h / 2))
-// 		.attr("y", padding/1.5)
-// 		.attr("text-anchor", "middle")
-// 		.text("GDP");
-// 	svg.append("g")
-// 		.attr("class", "legend")
-// 		.attr("transform", "translate(" + 2*padding + "," + padding + ")")
-// 		.call(colorLegend);
-
-// 	//create actual cirkels
-// 	svg.selectAll("circle")
-// 		.data(clean_data["2012"])
-// 		.enter()
-// 		.append("circle")
-// 		.attr("cx", function(d){
-// 			return xScale(d.PPP);
-// 		})
-// 		.attr("cy", function(d){
-// 			return yScale(d.GDP);			
-// 		})
-// 		.attr("r", 5)
-// 		.attr("fill", function(d){
-// 			return colorScale(d.tourists);
-// 		});
-
-// }
-
-// function valuesFun(i, name) {
-// 	// INPUT DATA: iterate over countries
-// 	Object.values(i).forEach(function(d){
-// 		// INPUT DATA: iterate over years in input data
-// 		d.forEach(function(e) {
-// 			// CLEAN DATA: if year in cleandata -> select the right year & country
-// 			if (typeof(clean_data[e.Time]) !== "undefined") {
-// 				clean_data[e.Time].forEach(function(f){
-// 					if (f.country === e.Country) {
-// 						// add the datapoint to clean_data variable
-// 						f[name] = e.Datapoint;
-// 					};
-// 				});
-// 			};
-// 		});
-// 	});
-// };
-
-// function delCountries(data) {
-// 	Object.values(data).forEach(function(d){
-// 		d.forEach(function(e){
-// 			if (typeof(e.PPP) == "undefined") {
-// 				d.splice(d.indexOf(e), 1);
-// 			}
-// 			else if (typeof(e.tourists) == "undefined"){
-// 				d.splice(d.indexOf(e), 1);
-// 			};
-// 		});
-// 	});
-// };
-
-
-
+}

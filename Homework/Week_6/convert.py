@@ -29,11 +29,32 @@ def processing(file):
 	# Delete the missing values
 	file = file.dropna()
 
-	file = file.rename(columns = {'ISO alpha-3 code' : 'CountryCode'})
+	file = file.rename(columns = {'ISO alpha-3 code' : 'CountryCode', 'crop_land' : 'Crop land', 'grazing_land' : 'Grazing land', 'forest_land' : 'Forest land', 'fishing_ground' : 'Fishing ground', 'built_up_land' : 'Build up land', 'carbon' : 'Carbon'} )
 
 	print(file)
 
 	return(file)
+
+def average(file):
+	"""
+	Function calculating the average across the world for:
+	EFConsPerCap, Crop land, Grazing land, Forest land, Fishing grounds, Build up land, Carbon
+	"""
+
+	average_world = []
+	average = {}
+
+	for i in range(4,11):
+		average[]
+		file.iloc[:, i].mean()
+	average_crop = file['Crop land'].mean()
+	average_grazing = file['Grazing land'].mean()
+	average_forest = file['Forest land'].mean()
+	average_fishing = file['Fishing ground'].mean()
+	average_build = file['Build up land'].mean()
+	average_carbon = file['Carbon'].mean()
+
+
 
 if __name__ == "__main__":
 
@@ -43,6 +64,8 @@ if __name__ == "__main__":
 	
 	# process data
 	data_frame = processing(data_frame)
+
+	# data_world = average(data_frame)
 
 	# export to json
 	export = data_frame.to_json(OUTPUT_FILE, orient='records')
