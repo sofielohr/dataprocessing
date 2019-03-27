@@ -1,9 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
+</html>
 <!-- Sofie Lohr, 11038926 -->
 <html>
   <head>
   	<meta charset="utf-8">
     <title>Footprint</title>
+
+    <!-- Import Bootstr -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     <!-- Import D3 V5 -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -23,6 +30,7 @@
     </script>
     
     <!-- REST OF IMPORTS HERE -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type"text/css" href="LinkedViews.css">
     <script src="LinkedViews.js"></script>
 
@@ -30,10 +38,24 @@
   </head>
 
   <body>
-  	<h1>Ecological Footprint around the world</h1>
-  	<p>The world map represents the intensity (in global hectares) of the ecological footprint from consumption for each country where darker means higher intensity. The pie chart represents the distribution from the Ecological footprint of consumption (for Armenia) between crop land, grazing land, forest land, fishing grounds, built up land and carbon. Data from <a href="https://www.kaggle.com/footprintnetwork/national-footprint-accounts-2018">Kaggle</a>. </p>
-  	<p style="font-size: 11px" >Name: Sofie Löhr (11038926)</p>
-    <div id="container_map"></div>
-    <div id="chart"></div>
+  <main role="main" class="flex-shrink-0">
+  <div class="container">
+    <h1 class="mt-5">Ecological Footprint around the world</h1>
+    <p class="lead">According to the <a href="https://www.footprintnetwork.org">Global Footprint Network</a> the Ecological Footprint calculates how much biologically productive area is required to produce the resources used by the human population and to absorb humanity's carbon dioxide emissions.</p>
+    <p>The map below represents the intensity (in global hectares) of the ecological footprint from consumption (in 2014): the productive area needed to provide for the selected population's consumption.</p>
+  </div>
+  <div class="container" id="container_map"></div>
+  <div class="container">
+    <p>The Ecological Footprint tracks the use of six categories of productive surface areas: cropland, grazing land, fishing grounds, built-up land, forest area, and carbon demand on land. Besides knowing the level of the Ecological Footprint per country, it might be interesting to look at the distribution among these categories. On average, the carbon footprint is more than 50% of the Ecological Footprint, but if you look closer to specific countries, you will see this might not be the case everywhere.</p>
+  </div>
+  <div id="chart"></div>
+  </main>
+  
+  <footer class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted">Data from <a href="https://www.kaggle.com/footprintnetwork/national-footprint-accounts-2018">Kaggle</a>,</span>
+    <span class="text-muted">created by: Sofie Löhr (11038926)</span>
+  </div>
+    <p style="font-size: 11px" ></p>
   </body>
 </html>

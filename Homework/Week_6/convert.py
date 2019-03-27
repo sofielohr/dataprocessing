@@ -40,20 +40,11 @@ def average(file):
 	Function calculating the average across the world for:
 	EFConsPerCap, Crop land, Grazing land, Forest land, Fishing grounds, Build up land, Carbon
 	"""
+	# column_names = ['Crop land', 'Grazing land', 'Forest land', 'Fishing ground', 'Build up land', 'Carbon']
+	averages = {'Crop land': file['Crop land'].mean(), 'Grazing land': file['Grazing land'].mean(), 'Forest land': file['Forest land'].mean(), 'Fishing ground': file['Fishing ground'].mean(), 'Build up land': file['Build up land'].mean(), 'Carbon': file['Carbon'].mean()}
+	world_average = pd.DataFrame(averages, index = ['0'])
 
-	average_world = []
-	average = {}
-
-	for i in range(4,11):
-		average[]
-		file.iloc[:, i].mean()
-	average_crop = file['Crop land'].mean()
-	average_grazing = file['Grazing land'].mean()
-	average_forest = file['Forest land'].mean()
-	average_fishing = file['Fishing ground'].mean()
-	average_build = file['Build up land'].mean()
-	average_carbon = file['Carbon'].mean()
-
+	return(world_average)
 
 
 if __name__ == "__main__":
@@ -64,8 +55,8 @@ if __name__ == "__main__":
 	
 	# process data
 	data_frame = processing(data_frame)
-
-	# data_world = average(data_frame)
+	data_world = average(data_frame)
 
 	# export to json
 	export = data_frame.to_json(OUTPUT_FILE, orient='records')
+	export_world = data_world.to_json("data_world.json", orient='records')
